@@ -5,9 +5,10 @@ from langchain.chains import LLMChain
 from third_parties.linkedin import scrape_linked_profile
 from agents.linkedin_lookup_agent import lookup as linkedin_lookup_agent
 from output_parser import summary_parser, Summary
+from typing import Tuple
 
 
-def llm_exlore_func(name: str) -> Summary:
+def llm_exlore_func(name: str) -> Tuple[Summary, str]:
     linked_in_profile_url = linkedin_lookup_agent(name=name)
 
     summary_template = """
@@ -30,7 +31,8 @@ def llm_exlore_func(name: str) -> Summary:
     linkedin_data = scrape_linked_profile(linked_in_profile_url)
 
     res = chain.run(information=linkedin_data)
-    return summary_parser.parse(res)
+    print(linkedin_data.keys())
+    return summary_parser.parse(res), linkedin_data.get("profile_pic_url")
 
 
 if __name__ == "__main__":
